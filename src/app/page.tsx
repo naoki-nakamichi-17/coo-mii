@@ -5,7 +5,7 @@ export default function Home() {
     <>
     {/* TODO: ここにlogin認証を実装して画面遷移を管理(AngularでいうRouting State管理をするイメージ) */}
     if (false) {
-      redirect("/auth/signup")
+      redirect("/mypage")
     }
     </>
   );
