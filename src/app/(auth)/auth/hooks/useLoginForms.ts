@@ -32,7 +32,7 @@ export const useLoginForm = () => {
         throw signInError;
       }
 
-      router.push("/");
+      router.push("/mypage");
 
     } catch (error) {
       if (error instanceof Error) {

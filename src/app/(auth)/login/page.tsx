@@ -1,9 +1,9 @@
 "use client";
 
-import Button from '@/app/features/auth/components/Button'
-import InputField from '@/app/features/auth/components/InputField'
-import { useLoginForm } from '@/app/features/auth/hooks/useLoginForms';
 import Link from 'next/link';
+import InputField from '../auth/components/InputField';
+import Button from '../auth/components/Button';
+import { useLoginForm } from '../auth/hooks/useLoginForms';
 
 const Login = () => {
   const { form, onSubmit } = useLoginForm();

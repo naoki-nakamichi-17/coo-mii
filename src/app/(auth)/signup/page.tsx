@@ -1,8 +1,8 @@
 "use client";
 
-import Button from '@/app/features/auth/components/Button'
-import InputField from '@/app/features/auth/components/InputField'
-import { useSignupForm } from '@/app/features/auth/hooks/useSignupForms'
+import Button from '@/app/auth/auth/components/Button'
+import InputField from '@/app/auth/auth/components/InputField'
+import { useSignupForm } from '@/app/auth/auth/hooks/useSignupForms'
 import Link from 'next/link';
 
 const Signup = () => {
