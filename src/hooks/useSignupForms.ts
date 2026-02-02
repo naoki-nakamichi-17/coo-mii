@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SubmitHandler, useForm } from "react-hook-form"
-import { signupFormSchema } from "../lib/signupFormSchema";
+import { signupFormSchema } from "@/lib/signupFormSchema";
 import z from "zod";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -33,7 +33,14 @@ export const useSignupForm = () => {
         throw signUpError;
       }
 
-      const { error: userError } = await supabase.from("User").insert([{ id: data.user?.id, username, email }]);
+      const { error: userError } = await supabase.from("users").insert([{
+        id: data.user?.id,
+        account: username,
+        email: email,
+        name: username,
+        create_user_id: data.user?.id,
+        update_user_id: data.user?.id
+      }]);
 
       if (userError) {
         if (userError.message.includes("duplicate key value violates unique constraint")) {
@@ -42,7 +49,7 @@ export const useSignupForm = () => {
         return;
       }
 
-      router.push("/auth/login");
+      router.push("/login");
 
     } catch (error) {
       if (error instanceof Error) {

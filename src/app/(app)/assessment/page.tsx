@@ -1,86 +1,83 @@
-import { assessmentQuestions } from "@/data/assessmentQuestions"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Separator } from "@/components/ui/separator"
-import { Card, CardContent } from "@/components/ui/card"
+import { supabaseServer } from "@/lib/supabaseServer"
+import AssessmentClient from "./AssessmentClient"
 
-export default function AssessmentPage() {
+export default async function Page() {
+  const userId = "296d0088-2c35-4330-a289-f56d40c41cc2"
+
+  // ① assessment を作成（UUIDはDBが自動生成）
+  const { data: assessment, error: assessmentError } = await supabaseServer
+    .from("assessments")
+    .insert({
+      user_id: userId,
+      title: "初回アセスメント",
+      status: "0",
+      create_user_id: userId,
+      update_user_id: userId,
+    })
+    .select()
+    .single()
+
+  if (assessmentError || !assessment) {
+    console.error(assessmentError)
+    throw new Error("assessment 作成失敗")
+  }
+
+  // ② questions を取得
+  const { data: rows, error: questionError } = await supabaseServer
+    .from("questions")
+    .select(`
+      question_id,
+      question_text,
+      categories (
+        name
+      )
+    `)
+    .eq("del_flg", false)
+    .order("question_id")
+
+  if (questionError) {
+    console.error(questionError)
+    throw new Error("質問の取得に失敗しました")
+  }
+
+  const questions = (rows ?? []).map((q: any, index: number) => {
+    const category = q.categories?.[0]
+
+    return {
+      id: q.question_id,
+      code: String(index + 1),
+      text: q.question_text,
+      category: category?.name ?? "",
+      subCategory: "",
+      materialCodes: [],
+    }
+  })
+
+  // 🔥 ③ assessment_questions を自動生成（FKを満たす）
+  const assignmentRows = questions.map((q, index) => ({
+    assessment_id: assessment.assessment_id,
+    question_id: q.id,
+    display_no: index + 1,          // ← これが必須
+    is_required: true,             // ← 明示的に入れると安全
+    create_user_id: userId,
+    update_user_id: userId,
+  }))
+
+  const { error: assignError } = await supabaseServer
+    .from("assessment_questions")
+    .insert(assignmentRows)
+
+  if (assignError) {
+    console.error(assignError)
+    throw new Error("assessment_questions 作成失敗")
+  }
+
+  // ④ Client に渡す
   return (
-    <div className="h-full overflow-y-auto p-6 space-y-6 text-foreground">
-      <h1 className="text-xl font-bold">アセスメントシート入力</h1>
-      <Separator />
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardContent className="p-4 space-y-2">
-            <h3 className="text-sm font-semibold text-green-600">
-              「できている」の回答基準
-            </h3>
-            <ul className="list-disc pl-5 text-sm text-muted-foreground">
-              <li>いつももしくはよく自分でできる</li>
-              <li>質問内容によく当てはまる</li>
-            </ul>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 space-y-2">
-            <h3 className="text-sm font-semibold text-red-600">
-              「できていない」の回答基準
-            </h3>
-            <ul className="list-disc pl-5 text-sm text-muted-foreground">
-              <li>たまにもしくはほとんど自分でできない</li>
-              <li>できる日もあればできない日もある</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ここTableHeader化したい */}
-      {/* <div className="flex items-center gap-3">
-        <div className="h-4 w-4 rounded-full border-2 border-muted-foreground" />
-        <h2 className="text-lg font-semibold">健康・生活</h2>
-      </div>
-      <Separator /> */}
-
-      <div className="rounded-lg border">
-        <Table className="table-fixed">
-          <TableHeader>
-            <TableRow className="bg-muted">
-              <TableHead className="w-[50px] text-center">№</TableHead>
-              <TableHead className="w-[80px] py-5 text-center whitespace-normal break-words leading-tight">できている</TableHead>
-              <TableHead className="w-[80px] py-5 text-center whitespace-normal break-words leading-tight">だいたいできている</TableHead>
-              <TableHead className="w-[80px] py-5 text-center whitespace-normal break-words leading-tight">あまりできていない</TableHead>
-              <TableHead className="w-[80px] py-5 text-center whitespace-normal break-words leading-tight">できていない</TableHead>
-              <TableHead className="w-3/4">内容</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {assessmentQuestions.map((q) => (
-              <TableRow key={q.id} className="h-10">
-                <TableCell className="text-center font-medium">
-                  {q.code}
-                </TableCell>
-                <RadioGroup className="contents">
-                  <TableCell className="text-center">
-                    <RadioGroupItem id={`q-${q.id}`} value="ok" />
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <RadioGroupItem id={`q-${q.id}`} value="maybeok" />
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <RadioGroupItem id={`q-${q.id}`} value="maybeno" />
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <RadioGroupItem id={`q-${q.id}`} value="no" />
-                  </TableCell>
-                </RadioGroup>
-
-                <TableCell className="text-sm">{q.text}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+    <AssessmentClient
+      questions={questions}
+      assessmentId={assessment.assessment_id}
+      userId={userId}
+    />
   )
 }

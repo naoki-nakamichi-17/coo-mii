@@ -1,14 +1,14 @@
 "use client";
 
 import Link from 'next/link';
-import InputField from '../auth/components/InputField';
-import Button from '../auth/components/Button';
-import { useLoginForm } from '../auth/hooks/useLoginForms';
+import InputField from '@/components/InputField';
+import Button from '@/components/Button';
+import { useLoginForm } from '@/hooks/useLoginForms';
 
 const Login = () => {
   const { form, onSubmit } = useLoginForm();
   return (
-    <div className='mx-auto max-w-sm my-14'>
+    <div className='mx-auto max-w-sm my-14 w-full'>
       <h2 className='text-center font-medium text-2xl mb-4'>
         ログイン
       </h2>
@@ -43,7 +43,7 @@ const Login = () => {
           </Button>
         </div>
       </form>
-      <Link href="/auth/signup" className="mt-4 block text-center text-blue-400">
+      <Link href="/signup" className="mt-4 block text-center text-blue-400">
         初めてご利用の方はこちら
       </Link>
     </div>

@@ -1,36 +1,138 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# xxx-xxx（xxxxシステム）
 
-## Getting Started
+xxx-xxx は、xxxxxxxxx の Web アプリケーションです。
 
-First, run the development server:
+xxxxxxxxxxx
+xxxxxxxxxxx
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 技術スタック
+
+| 区分           | 技術                                       |
+| -------------- | ------------------------------------------ |
+| フロントエンド | Next.js 14+ (App Router)                   |
+| UI             | React, TypeScript, Tailwind CSS, shadcn/ui |
+| バックエンド   | Supabase (PostgreSQL + Auth + API)         |
+| 認証           | Supabase Auth                              |
+| ホスティング   | AWS amplify                                |
+
+---
+
+## ディレクトリ構成
+
+```text
+src/app
+├─ (auth)/                 # 認証系（ログイン・登録）
+│  ├─ login/
+│  │  └─ page.tsx
+│  └─ layout.tsx           # 認証用レイアウト
+│
+├─ (app)/                  # ログイン後のメインアプリ
+│  ├─ layout.tsx           # Sidebar + Header + Footer
+│  ├─ dashboard/
+│  │  └─ page.tsx
+│  ├─ assessment/
+│  │  └─ page.tsx          # アセスメント入力画面
+│  └─ users/
+│     └─ page.tsx          # 利用者管理
+│
+├─ api/                    # Next.js Route Handlers
+│  ├─ place-list/
+│  │  └─ route.ts
+│  └─ ...
+│
+├─ layout.tsx              # ルートレイアウト
+└─ page.tsx                # 初期ページ
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## UI コンポーネント
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```text
+src/components
+├─ layouts/
+│ ├─ Header.tsx
+│ ├─ Sidebar.tsx
+│ └─ Footer.tsx
+│
+├─ ui/ # shadcn/ui
+│ ├─ button.tsx
+│ ├─ table.tsx
+│ ├─ dialog.tsx
+│ └─ ...
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Supabase 環境構築
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Supabase プロジェクト作成
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+https://supabase.com で新規プロジェクトを作成
 
-## Deploy on Vercel
+### 2. APIキー取得
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Project Settings → API から以下を取得
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Project URL
+- anon public key
+
+### 3. 環境変数設定
+
+`.env.local`
+
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxxxxxxxxxxx
+
+---
+
+## インストール & 起動
+
+git clone https://github.com/naoki-nakamichi-17/coo-mii.git
+cd coo-mii
+npm install
+npm run dev
+
+ブラウザで以下を開きます：
+
+http://localhost:3000
+
+---
+
+## 開発モードで使っている仕組み
+
+| 機能       | 実装                         |
+| ---------- | ---------------------------- |
+| 認証       | Supabase Auth                |
+| データ取得 | Supabase client + API Routes |
+| 状態管理   | React Hooks                  |
+| UI         | shadcn + Tailwind            |
+
+---
+
+## 設計方針
+
+- 認証画面と業務画面を Route Groups で分離
+- APIは Next.js Route Handler に集約
+- UIは shadcn コンポーネントで統一
+- Supabase を単一のデータソースとして使用
+
+---
+
+## デプロイ（AWS Amplify）
+
+1. GitHub に push
+2. xxxxxxxxxxx
+3. xxxxxxxxxxx
+4. xxxxxxxxxxx
+5. Deploy
+
+---
+
+## ライセンス
+
+xxxxxxxxx
+
+---

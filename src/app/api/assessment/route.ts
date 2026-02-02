@@ -1,69 +1,47 @@
-import { NextRequest, NextResponse } from "next/server";
-import { assessmentSubmitSchema } from "@/lib/assessmentSchema";
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
-export async function POST(req: NextRequest) {
-  const formData = await req.formData();
-  const raw = formData.get("payload") as string;
-  const json = JSON.parse(raw);
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY! // ← 必須
+);
 
-  // Zodで検証
-  const validated = assessmentSubmitSchema.parse(json);
-
-  // リクエストfetch
+export async function POST(req: Request) {
   try {
+    const body = await req.json();
+    console.log("API payload:", body);
 
-    const res = await fetch(process.env.COOMII_API_URL!, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(validated),
-    });
+    const { assessment_id, user_id, answers } = body;
 
-    if (res.status !== 200) {
-      new Error(`COOMII API Error: ${res.status}`);
-    }
+    const rows = answers.map((answer: any) => ({
+      assessment_id,
+      question_id: answer.question_id,
+      response_level: answer.response_level,
+      create_user_id: user_id,
+    }));
 
-    const result = await res.json();
-    return NextResponse.json({ success: true, result });
+    console.log("Insert rows:", rows);
 
-  } catch (e) {
-    console.error(e);
-  }
-}
+    const { data, error } = await supabase
+      .from("assessment_responses")
+      .insert(rows)
+      .select();
 
-export async function GET(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get("userId");
-
-    if (!userId) {
+    if (error) {
+      console.error("Supabase error detail:", error);
       return NextResponse.json(
-        { success: false, error: "userId is required" },
-        { status: 400 }
+        { success: false, error },
+        { status: 500 }
       );
     }
 
-    const res = await fetch(
-      `${process.env.COOMII_API_URL!}/assessment?userId=${userId}`,
-      { method: "GET" }
-    );
+    console.log("Inserted:", data);
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(
-        `COOMII API failed: ${res.status} ${res.statusText} - ${errorText}`
-      );
-    }
-
-    const result = await res.json();
-
-    return NextResponse.json({ success: true, result });
+    return NextResponse.json({ success: true, data });
   } catch (e) {
-    console.error(e);
-
+    console.error("API crash:", e);
     return NextResponse.json(
-      { success: false, error: (e as Error).message },
+      { success: false, error: String(e) },
       { status: 500 }
     );
   }

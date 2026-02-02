@@ -1,9 +1,9 @@
 "use client";
 
-import Button from '@/app/auth/auth/components/Button'
-import InputField from '@/app/auth/auth/components/InputField'
-import { useSignupForm } from '@/app/auth/auth/hooks/useSignupForms'
 import Link from 'next/link';
+import InputField from '@/components/InputField';
+import Button from '@/components/Button';
+import { useSignupForm } from '@/hooks/useSignupForms';
 
 const Signup = () => {
   const { form, onSubmit, error } = useSignupForm();
@@ -58,7 +58,7 @@ const Signup = () => {
           </Button>
         </div>
       </form>
-      <Link href="/auth/login" className="mt-4 block text-center text-blue-400">
+      <Link href="/login" className="mt-4 block text-center text-blue-400">
         既に登録済みの方はこちら
       </Link>
     </div>

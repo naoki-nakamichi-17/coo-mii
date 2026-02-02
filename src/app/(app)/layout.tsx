@@ -8,12 +8,15 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Header />
-
       <div className="content flex">
         <SidebarProvider>
           <AppSidebar />
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="flex-1 overflow-y-auto">
+            <Header />
+            <div className="px-4 py-8">
+              {children}
+            </div>
+          </main>
         </SidebarProvider>
       </div>
 

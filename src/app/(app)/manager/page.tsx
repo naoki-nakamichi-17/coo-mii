@@ -14,10 +14,10 @@ export default function ManagerPage() {
     <div>
       <div className="flex items-center justify-between space-y-2">
         <h1>
-          Users
+          担当者一覧
         </h1>
         <Button>
-          Add New User
+          ユーザ追加
         </Button>
       </div>
 
@@ -25,14 +25,14 @@ export default function ManagerPage() {
         <div className="flex items-center gap-4 py-4">
           <div className="flex gap-2">
             <Input></Input>
-            <Button>Status</Button>
-            <Button>Plan</Button>
-            <Button>Role</Button>
+            <Button>ステータス</Button>
+            <Button>計画</Button>
+            <Button>権限</Button>
           </div>
           <div className="ml-auto">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">Open</Button>
+                <Button variant="outline">＝</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-40" align="start">
                 <DropdownMenuGroup>
@@ -71,22 +71,22 @@ export default function ManagerPage() {
                     <Checkbox id="terms-checkbox" name="terms-checkbox" />
                   </TableHead>
                   <TableHead>
-                    Name
+                    名前
                   </TableHead>
                   <TableHead>
-                    Role
+                    権限
                   </TableHead>
                   <TableHead>
-                    Plan
+                    役職
                   </TableHead>
                   <TableHead>
-                    Email
+                    メールアドレス
                   </TableHead>
                   <TableHead>
-                    Country
+                    国籍
                   </TableHead>
                   <TableHead>
-                    Status
+                    ステータス
                   </TableHead>
                   <TableHead>
                     {/* 空白 */}
@@ -143,8 +143,8 @@ export default function ManagerPage() {
             0 of 40 row(s) selected.
           </div>
           <div className="space-x-2">
-            <Button disabled>Preview</Button>
-            <Button>Next</Button>
+            <Button disabled>前へ</Button>
+            <Button>次へ</Button>
           </div>
         </div>
       </div>
